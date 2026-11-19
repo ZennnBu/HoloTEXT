@@ -5,14 +5,18 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class HoloTextCommand implements CommandExecutor {
+public class HoloTextCommand implements CommandExecutor, TabCompleter {
 
     private final HoloText plugin;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -22,10 +26,10 @@ public class HoloTextCommand implements CommandExecutor {
     }
 
     private void send(CommandSender sender, String message) {
+        String prefix = plugin.getConfig().getString("messages.prefix", "");
+
         sender.sendMessage(
-            miniMessage.deserialize(
-                plugin.getConfig().getString("messages.prefix", "") + " " + message
-            )
+            miniMessage.deserialize(prefix + " " + message)
         );
     }
 
@@ -43,7 +47,7 @@ public class HoloTextCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            send(sender, "<aqua>HoloText Commands:");
+            send(sender, "<gradient:#8A2BE2:#00D4FF><bold>HoloText Commands</bold></gradient>");
             send(sender, "<gray>/ht create <name> <text>");
             send(sender, "<gray>/ht delete <name>");
             send(sender, "<gray>/ht list");
@@ -111,11 +115,44 @@ public class HoloTextCommand implements CommandExecutor {
                 for (String name : plugin.getHologramManager().getHologramNames()) {
                     send(sender, "<gray>- <white>" + name);
                 }
+
+                if (plugin.getHologramManager().getHologramNames().isEmpty()) {
+                    send(sender, "<gray>No holograms found.");
+                }
             }
 
             default -> send(sender, "<red>Unknown command!");
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(
+            CommandSender sender,
+            Command command,
+            String alias,
+            String[] args
+    ) {
+
+        if (!sender.hasPermission("holotext.admin")) {
+            return Collections.emptyList();
+        }
+
+        if (args.length == 1) {
+            return Arrays.asList("create", "delete", "list")
+                .stream()
+                .filter(s -> s.startsWith(args[0].toLowerCase()))
+                .collect(Collectors.toList());
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("delete")) {
+            return plugin.getHologramManager().getHologramNames()
+                .stream()
+                .filter(s -> s.startsWith(args[1].toLowerCase()))
+                .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
     }
 }
