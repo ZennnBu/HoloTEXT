@@ -1,0 +1,28 @@
+
+# HoloText Configuration
+# Professional Hologram Management System
+
+settings:
+  debug: false
+  auto-save: true
+  save-interval: 300
+
+holograms:
+  default:
+    billboard: CENTER
+    shadow: true
+    see-through: false
+    default-line-width: 200
+    background: "#00000000"
+    alignment: CENTER
+    view-range: 48.0
+
+messages:
+  prefix: "<gradient:#8A2BE2:#00D4FF><bold>HoloText</bold></gradient> <dark_gray>»</dark_gray>"
+  no-permission: "<red>You don't have permission to use this command."
+  player-only: "<red>This command can only be used by players."
+  reload: "<green>Configuration reloaded successfully!"
+  hologram-created: "<green>Hologram <white>%name%</white> created!"
+  hologram-deleted: "<red>Hologram <white>%name%</white> deleted!"
+  hologram-not-found: "<red>Hologram not found."
+  
