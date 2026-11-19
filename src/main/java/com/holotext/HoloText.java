@@ -16,23 +16,24 @@ public final class HoloText extends JavaPlugin {
 
         hologramManager = new HologramManager(this);
 
-        getLogger().info("--------------------------------");
-        getLogger().info("       HoloText v1.0.0");
-        getLogger().info(" Professional Hologram System");
-        getLogger().info("--------------------------------");
+        HoloTextCommand holoCommand = new HoloTextCommand(this);
+
+        getCommand("holotext").setExecutor(holoCommand);
+        getCommand("holotext").setTabCompleter(holoCommand);
+
+        getLogger().info("HoloText v1.0.0 enabled!");
         getLogger().info("Hologram Manager initialized!");
-        getLogger().info("HoloText enabled successfully!");
+        getLogger().info("Commands registered successfully!");
     }
 
     @Override
     public void onDisable() {
-
         if (hologramManager != null) {
             hologramManager.clear();
         }
 
-        getLogger().info("HoloText disabled!");
         instance = null;
+        getLogger().info("HoloText disabled!");
     }
 
     public static HoloText getInstance() {
